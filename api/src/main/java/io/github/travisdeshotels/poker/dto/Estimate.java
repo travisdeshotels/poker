@@ -1,4 +1,4 @@
-package io.github.travisdeshotels.poker.beans;
+package io.github.travisdeshotels.poker.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Estimate {
-    String player;
+    String playerId;
     String pointValue;
 }

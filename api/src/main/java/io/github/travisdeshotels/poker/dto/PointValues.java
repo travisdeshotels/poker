@@ -1,4 +1,4 @@
-package io.github.travisdeshotels.poker.beans;
+package io.github.travisdeshotels.poker.dto;
 
 public enum PointValues {
     One("1"),

@@ -1,4 +1,4 @@
-package io.github.travisdeshotels.poker.beans;
+package io.github.travisdeshotels.poker.dto;
 
 import lombok.Data;
 
