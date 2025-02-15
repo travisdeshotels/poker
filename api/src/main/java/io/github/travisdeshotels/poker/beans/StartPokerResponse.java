@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class JoinResponse {
-    int numberOfPlayersConnected;
+public class StartPokerResponse {
+    String gameId;
 }

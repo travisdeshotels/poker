@@ -4,7 +4,10 @@ import io.github.travisdeshotels.poker.beans.Estimate;
 import io.github.travisdeshotels.poker.beans.HandStatus;
 import io.github.travisdeshotels.poker.beans.JoinResponse;
 import io.github.travisdeshotels.poker.beans.Player;
+import io.github.travisdeshotels.poker.beans.StartPokerResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,14 +27,14 @@ public class PokerController {
     private boolean handIsEstimated = false;
 
     @RequestMapping(method = RequestMethod.POST)
-    public String startPoker(@RequestBody Player player){
+    public ResponseEntity<StartPokerResponse> startPoker(@RequestBody Player player){
         Map<String, String> newGame = new HashMap<>();
         newGame.put(player.getName(), null);
         String gameId = UUID.randomUUID().toString().split("-")[0];
         games.put(gameId, newGame);
         log.info("Game {} started", gameId);
 
-        return gameId;
+        return new ResponseEntity<>(new StartPokerResponse(gameId), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/join/{id}")
@@ -58,7 +61,7 @@ public class PokerController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}")
-    public HandStatus viewStatus(@PathVariable("id") String gameId){
+    public ResponseEntity<HandStatus> viewStatus(@PathVariable("id") String gameId){
         Map<String, String> game = games.get(gameId);
         List filtered = game.entrySet()
                 .stream()
@@ -81,7 +84,7 @@ public class PokerController {
             status.setPlayersWithoutEstimate(filtered.size());
         }
 
-        return status;
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value="/{id}")

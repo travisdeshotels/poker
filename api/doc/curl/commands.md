@@ -2,7 +2,7 @@
 
 ## Start poker
 ```shell
-game_id=$(curl -d '{"name": "Ted"}' -H "Content-Type: application/json" -X POST localhost:8080)
+game_id=$(curl -d '{"name": "Ted"}' -H "Content-Type: application/json" -X POST localhost:8080 | jq -r .gameId)
 ```
 
 ## Join game
