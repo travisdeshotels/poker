@@ -59,9 +59,10 @@ public class PokerController {
         return new ResponseEntity<>(new HandStatusDto(status), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/result/{id}")
-    public ResponseEntity<HandResult> getResult(@PathVariable("id") String gameId){
-        return new ResponseEntity<>(games.get(gameId).getResult(gameId), HttpStatus.OK);
+    @RequestMapping(method = RequestMethod.GET, value="/result/{gameId}/{playerId}")
+    public ResponseEntity<HandResult> getResult(@PathVariable("gameId") String gameId,
+                                                @PathVariable("playerId") String playerId){
+        return new ResponseEntity<>(games.get(gameId).getResult(playerId), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value="/{id}")
