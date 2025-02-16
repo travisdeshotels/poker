@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.github.travisdeshotels.poker.terminal.beans.Estimate;
-import io.github.travisdeshotels.poker.terminal.beans.HandStatus;
+import io.github.travisdeshotels.poker.terminal.beans.HandResult;
+import io.github.travisdeshotels.poker.terminal.beans.JoinResponse;
+import io.github.travisdeshotels.poker.terminal.beans.StartPokerResponse;
 import io.github.travisdeshotels.poker.terminal.exception.PokerApiException;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,43 +28,40 @@ public class RestUtil {
         this.API_URL = url;
     }
 
-    public String createGame(String playerName){
+    public StartPokerResponse createGame(String playerName){
         ObjectMapper mapper = new ObjectMapper();
-        String gameId = null;
+        StartPokerResponse responseBody = null;
         try {
             String data = mapper.writeValueAsString(new Object(){
                 @Getter
                 @Setter
                 String name = playerName;
             });
-            if (this.postData(this.API_URL, data) == 200){
-                Map responseBody = mapper.readValue(this.inputStream, Map.class);
-                gameId = (String) responseBody.get("gameId");
-                out("Game started! Game id is " + gameId);
+            if (this.postData(this.API_URL, data) == 201){
+                responseBody = mapper.readValue(this.inputStream, StartPokerResponse.class);
             } else {
                 out("Oops!");
             }
         } catch (PokerApiException | IOException e) {
             throw new RuntimeException(e);
         }
-        return gameId;
+        return responseBody;
     }
 
-    public int joinGame(String gameId, String playerName){
+    public JoinResponse joinGame(String gameId, String playerName){
         ObjectMapper mapper = new ObjectMapper();
-        int numberOfPlayers = -1;
+        JoinResponse responseBody = null;
         try {
             String data = mapper.writeValueAsString(new Object(){
                 @Getter String name = playerName;
             });
            if (this.postData(this.API_URL + "/join/" + gameId, data) == 200) {
-                Map responseBody = mapper.readValue(this.inputStream, Map.class);
-                numberOfPlayers = (int) responseBody.get("numberOfPlayersConnected");
+                responseBody = mapper.readValue(this.inputStream, JoinResponse.class);
            }
         } catch (IOException | PokerApiException e) {
             throw new RuntimeException(e);
         }
-        return numberOfPlayers;
+        return responseBody;
     }
 
     public int postData(String url, String data) throws PokerApiException {
@@ -97,30 +96,27 @@ public class RestUtil {
         }
     }
 
-    public boolean isEstimateNeeded(String gameId){
+    public String getStatus(String gameId, String playerId){
         try {
-            HandStatus status = (HandStatus) this.getData(this.API_URL + "/" + gameId, HandStatus.class);
-            out(status.toString());
-            return status.getEstimateList() == null || status.getPlayersWithoutEstimate() == 0;
+            Map response = (Map) this.getData(this.API_URL + "/status/" + gameId + "/" + playerId, Map.class);
+            return (String) response.get("handStatus");
         } catch (PokerApiException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public HandStatus getResult(String gameId){
+    public HandResult getResult(String gameId, String playerId){
         try {
-            HandStatus status = (HandStatus) this.getData(this.API_URL + "/" + gameId, HandStatus.class);
-            out(status.toString());
-            return status;
+            return (HandResult) this.getData(this.API_URL + "/result/" + gameId + "/" + playerId, HandResult.class);
         } catch (PokerApiException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void submitResponse(String player, String pointValue, String gameId){
+    public void submitResponse(String gameId, String playerId, String pointValue){
         //url + gameid POST
         ObjectMapper mapper = new ObjectMapper();
-        Estimate estimate = new Estimate(player, pointValue);
+        Estimate estimate = new Estimate(playerId, pointValue);
         try {
             this.postData(this.API_URL + "/" + gameId, mapper.writeValueAsString(estimate));
         } catch (PokerApiException e) {

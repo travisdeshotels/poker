@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Estimate {
-    String playerId;
-    String pointValue;
+public class HandResult {
+    List<EstimateWithPlayerName> estimateList;
+    Float estimateAverage;
 }

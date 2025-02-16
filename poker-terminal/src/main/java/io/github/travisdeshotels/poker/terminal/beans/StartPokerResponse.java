@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Estimate {
+public class StartPokerResponse {
+    String gameId;
     String playerId;
-    String pointValue;
 }
