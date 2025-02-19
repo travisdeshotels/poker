@@ -49,6 +49,7 @@ public class PokerController {
 
     @RequestMapping(method = RequestMethod.POST, value="/{id}")
     public void submitEstimate(@PathVariable("id") String gameId, @RequestBody Estimate estimate){
+        log.info("Game: {} Player: {} Estimate: {} submitted", gameId, estimate.getPlayerId(), estimate.getPointValue());
         games.get(gameId).submitEstimate(estimate.getPlayerId(), estimate.getPointValue());
     }
 
@@ -62,6 +63,7 @@ public class PokerController {
     @RequestMapping(method = RequestMethod.GET, value="/result/{gameId}/{playerId}")
     public ResponseEntity<HandResult> getResult(@PathVariable("gameId") String gameId,
                                                 @PathVariable("playerId") String playerId){
+        log.info("Game: {} Player: {} has viewed the hand result", gameId, playerId);
         return new ResponseEntity<>(games.get(gameId).getResult(playerId), HttpStatus.OK);
     }
 

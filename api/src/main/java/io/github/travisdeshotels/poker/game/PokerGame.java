@@ -4,6 +4,7 @@ import io.github.travisdeshotels.poker.beans.EstimateWithPlayerName;
 import io.github.travisdeshotels.poker.beans.HandStatus;
 import io.github.travisdeshotels.poker.beans.PlayerData;
 import io.github.travisdeshotels.poker.dto.HandResult;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,17 +12,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 public class PokerGame {
     Map<String, PlayerData> playerDataMap;
 
     public PokerGame(){
         playerDataMap =  new HashMap<>();
+        log.info("Game has started");
     }
 
     public String addPlayer(String playerName){
         String playerId = UUID.randomUUID().toString().split("-")[0];
         PlayerData data = new PlayerData(playerName, null, false);
         playerDataMap.put(playerId, data);
+        log.info("Player {} joined id is {}", playerName, playerId);
         return playerId;
     }
 
