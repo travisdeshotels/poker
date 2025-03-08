@@ -5,14 +5,15 @@ import io.github.travisdeshotels.poker.beans.HandStatus;
 import io.github.travisdeshotels.poker.dto.HandResult;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PokerGameTest {
-    PokerGame game;
-
     @Test
     public void pokerGameTestWithTwoPlayers(){
-        game = new PokerGame();
+        PokerGame game = new PokerGame(new ArrayList<>(Arrays.asList("1", "2", "3", "5", "8", "13")));
         String player1 = game.addPlayer("Bob");
         String player2 = game.addPlayer("Tom");
         assertEquals(2, game.getNumberOfPlayers());

@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,6 +27,7 @@ import java.util.UUID;
 @RestController
 public class PokerController {
     Map<String, PokerGame> games;
+    private final List<String> validPointValueList = Arrays.asList("1", "2", "3", "5", "8", "13");
 
     public PokerController(){
         games = new HashMap<>();
@@ -32,7 +35,7 @@ public class PokerController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<StartPokerResponse> startPoker(@RequestBody Player player){
-        PokerGame game = new PokerGame();
+        PokerGame game = new PokerGame(validPointValueList);
         String playerId = game.addPlayer(player.getName());
         String gameId = UUID.randomUUID().toString().split("-")[0];
         games.put(gameId, game);

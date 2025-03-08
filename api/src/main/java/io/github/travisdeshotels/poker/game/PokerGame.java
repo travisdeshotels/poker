@@ -15,10 +15,16 @@ import java.util.UUID;
 @Slf4j
 public class PokerGame {
     Map<String, PlayerData> playerDataMap;
+    List<String> validPointValuesList;
 
     public PokerGame(){
         playerDataMap =  new HashMap<>();
         log.info("Game has started");
+    }
+
+    public PokerGame(List<String> validPointValuesList){
+        playerDataMap =  new HashMap<>();
+        this.validPointValuesList = validPointValuesList;
     }
 
     public String addPlayer(String playerName){
@@ -34,7 +40,11 @@ public class PokerGame {
     }
 
     public void submitEstimate(String playerId, String estimate){
-        playerDataMap.get(playerId).setPointValue(estimate);
+        if (this.validPointValuesList.contains(estimate)) {
+            playerDataMap.get(playerId).setPointValue(estimate);
+        } else {
+            log.warn("Player {} submitted invalid estimate of {}. Ignoring", playerId, estimate);
+        }
     }
 
     public HandResult getResult(String playerId){
