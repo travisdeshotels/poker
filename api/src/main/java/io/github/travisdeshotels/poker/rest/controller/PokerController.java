@@ -1,10 +1,10 @@
 package io.github.travisdeshotels.poker.rest.controller;
 
-import io.github.travisdeshotels.poker.beans.HandStatus;
+import io.github.travisdeshotels.poker.dto.EndHandRequest;
+import io.github.travisdeshotels.poker.dto.ResetHandResponse;
 import io.github.travisdeshotels.poker.game.PokerGame;
 import io.github.travisdeshotels.poker.dto.Estimate;
 import io.github.travisdeshotels.poker.dto.HandResult;
-import io.github.travisdeshotels.poker.dto.HandStatusDto;
 import io.github.travisdeshotels.poker.dto.JoinResponse;
 import io.github.travisdeshotels.poker.dto.Player;
 import io.github.travisdeshotels.poker.dto.StartPokerResponse;
@@ -36,10 +36,10 @@ public class PokerController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<StartPokerResponse> startPoker(@RequestBody Player player){
         PokerGame game = new PokerGame(validPointValueList);
-        String playerId = game.addPlayer(player.getName());
+        String hostPlayerId = game.setHost();
         String gameId = UUID.randomUUID().toString().split("-")[0];
         games.put(gameId, game);
-        return new ResponseEntity<>(new StartPokerResponse(gameId, playerId), HttpStatus.CREATED);
+        return new ResponseEntity<>(new StartPokerResponse(gameId, hostPlayerId), HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/join/{id}")
@@ -56,12 +56,12 @@ public class PokerController {
         games.get(gameId).submitEstimate(estimate.getPlayerId(), estimate.getPointValue());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/status/{gameId}/{playerId}")
-    public ResponseEntity<HandStatusDto> viewStatus(@PathVariable("gameId") String gameId,
-                                                    @PathVariable("playerId") String playerId){
-        HandStatus status = games.get(gameId).getHandStatus(playerId);
-        return new ResponseEntity<>(new HandStatusDto(status), HttpStatus.OK);
-    }
+//    @RequestMapping(method = RequestMethod.GET, value="/status/{gameId}/{playerId}")
+//    public ResponseEntity<HandStatusDto> viewStatus(@PathVariable("gameId") String gameId,
+//                                                    @PathVariable("playerId") String playerId){
+//        HandStatus status = games.get(gameId).getHandStatus(playerId);
+//        return new ResponseEntity<>(new HandStatusDto(status), HttpStatus.OK);
+//    }
 
     @RequestMapping(method = RequestMethod.GET, value="/result/{gameId}/{playerId}")
     public ResponseEntity<HandResult> getResult(@PathVariable("gameId") String gameId,
@@ -72,5 +72,16 @@ public class PokerController {
 
     @RequestMapping(method = RequestMethod.DELETE, value="/{id}")
     public void endPoker(@PathVariable("id") String gameId){
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value="/end/{id}")
+    public ResponseEntity<ResetHandResponse> endHand(@PathVariable("id") String gameId, @RequestBody EndHandRequest request){
+        ResetHandResponse response = new ResetHandResponse("Invalid request!");
+        if(games.get(gameId).resetHand(request.getHostPlayerId())){
+            response.setResponse("Hand has been reset.");
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

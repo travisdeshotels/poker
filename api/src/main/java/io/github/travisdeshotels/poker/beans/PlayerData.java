@@ -8,5 +8,4 @@ import lombok.Data;
 public class PlayerData {
     String playerName;
     String pointValue;
-    boolean viewedResult;
 }
