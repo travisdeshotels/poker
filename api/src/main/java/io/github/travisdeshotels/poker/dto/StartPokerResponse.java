@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class StartPokerResponse {
     String gameId;
-    String playerId;
+    String hostId;
 }

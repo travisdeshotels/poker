@@ -1,30 +1,41 @@
 # Commands
 
-## Start poker
+## Host commands
+
+---
+### Start poker
 ```shell
-start_poker_response=$(curl -d '{"name": "Ted"}' -H "Content-Type: application/json" -X POST localhost:8080)
-game_id=$(echo $start_poker_response | jq -r .gameId)
-player1_id=$(echo $start_poker_response | jq -r .playerId)
+start_poker_response=$(curl -X POST localhost:8080); \
+game_id=$(echo "$start_poker_response" | jq -r .gameId); \
+host_id=$(echo "$start_poker_response" | jq -r .hostId);
 ```
 
-## Join game
+### View game status
 ```shell
-join_poker_response=$(curl -d '{"name": "Bill"}' -H "Content-Type: application/json" -X POST localhost:8080/join/$game_id)
-player2_id=$(echo $join_poker_response | jq -r .playerId)
-players_connected=$(echo $join_poker_response | jq -r .numberOfPlayersConnected)
+curl localhost:8080/status/"$game_id"/"$player1_id" | jq
 ```
 
-## Submit estimate
+### View result
+```shell
+curl localhost:8080/result/"$game_id"/"$player_id" | jq
+```
+
+### Reset hand
+```shell
+curl -H "Content-Type: application/json"  -d '{"hostPlayerId": "'"$host_id"'"}' -X POST localhost:8080/end/"$game_id"
+```
+
+## Player commands
+
+---
+### Join game
+```shell
+join_poker_response=$(curl -d '{"name": "Bill"}' -H "Content-Type: application/json" -X POST localhost:8080/join/$game_id); \
+player1_id=$(echo "$join_poker_response" | jq -r .playerId); \
+players_connected=$(echo "$join_poker_response" | jq -r .numberOfPlayersConnected)
+```
+
+### Submit estimate
 ```shell
 curl -d '{"playerId": "'$player1_id'", "pointValue": 13}' -H "Content-Type: application/json" -X POST localhost:8080/$game_id
-```
-
-## View game status
-```shell
-curl localhost:8080/status/$game_id/$player1_id | jq
-```
-
-## View result
-```shell
-curl localhost:8080/result/$game_id/$player_id | jq
 ```

@@ -1,5 +1,6 @@
 package io.github.travisdeshotels.poker.rest.controller;
 
+import io.github.travisdeshotels.poker.beans.HandStatusDto;
 import io.github.travisdeshotels.poker.dto.EndHandRequest;
 import io.github.travisdeshotels.poker.dto.ResetHandResponse;
 import io.github.travisdeshotels.poker.game.PokerGame;
@@ -34,7 +35,7 @@ public class PokerController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<StartPokerResponse> startPoker(@RequestBody Player player){
+    public ResponseEntity<StartPokerResponse> startPoker(){
         PokerGame game = new PokerGame(validPointValueList);
         String hostPlayerId = game.setHost();
         String gameId = UUID.randomUUID().toString().split("-")[0];
@@ -56,22 +57,28 @@ public class PokerController {
         games.get(gameId).submitEstimate(estimate.getPlayerId(), estimate.getPointValue());
     }
 
-//    @RequestMapping(method = RequestMethod.GET, value="/status/{gameId}/{playerId}")
-//    public ResponseEntity<HandStatusDto> viewStatus(@PathVariable("gameId") String gameId,
-//                                                    @PathVariable("playerId") String playerId){
-//        HandStatus status = games.get(gameId).getHandStatus(playerId);
-//        return new ResponseEntity<>(new HandStatusDto(status), HttpStatus.OK);
-//    }
-
-    @RequestMapping(method = RequestMethod.GET, value="/result/{gameId}/{playerId}")
-    public ResponseEntity<HandResult> getResult(@PathVariable("gameId") String gameId,
-                                                @PathVariable("playerId") String playerId){
-        log.info("Game: {} Player: {} has viewed the hand result", gameId, playerId);
-        return new ResponseEntity<>(games.get(gameId).getResult(playerId), HttpStatus.OK);
+    @RequestMapping(method = RequestMethod.GET, value="/status/{gameId}/{hostId}")
+    public ResponseEntity<HandStatusDto> viewStatus(@PathVariable("gameId") String gameId,
+                                                    @PathVariable("hostId") String hostId){
+        String status = games.get(gameId).getHandStatus(hostId) ? "Results are ready" : "Waiting on players";
+        return new ResponseEntity<>(new HandStatusDto(status), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value="/{id}")
+    @RequestMapping(method = RequestMethod.GET, value="/result/{gameId}/{hostId}")
+    public ResponseEntity<HandResult> getResult(@PathVariable("gameId") String gameId,
+                                                @PathVariable("hostId") String hostId){
+        HandResult result = games.get(gameId).getResult(hostId);
+        if (result == null){
+            log.info("Game: {} Player: {} has attempted to view the hand result!", gameId, hostId);
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        } else{
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value="/{gameId}")
     public void endPoker(@PathVariable("id") String gameId){
+        games.remove(gameId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value="/end/{id}")
