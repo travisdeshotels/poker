@@ -12,12 +12,12 @@ host_id=$(echo "$start_poker_response" | jq -r .hostId);
 
 ### View game status
 ```shell
-curl localhost:8080/status/"$game_id"/"$player1_id" | jq
+curl localhost:8080/status/"$game_id"/"$host_id" | jq
 ```
 
 ### View result
 ```shell
-curl localhost:8080/result/"$game_id"/"$player_id" | jq
+curl localhost:8080/result/"$game_id"/"$host_id" | jq
 ```
 
 ### Reset hand
