@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StartPokerResponse {
     String gameId;
-    String playerId;
+    String hostId;
 }
