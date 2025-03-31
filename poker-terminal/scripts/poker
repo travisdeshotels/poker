@@ -1,6 +1,11 @@
 #!/usr/bin/env zsh
 USERNAME=me
 
+if [ "$#" -ne 2 ]; then
+  echo "Usage: poker <API URL> <GAME_ID>"
+  exit
+fi
+
 export POKER_API_URL=$1
 export GAME_ID=$2
 join_poker_response=$(curl -d '{"name": "'$USERNAME'"}' -H "Content-Type: application/json" -X POST "$POKER_API_URL"/join/"$GAME_ID")
