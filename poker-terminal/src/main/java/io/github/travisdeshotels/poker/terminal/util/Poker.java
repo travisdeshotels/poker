@@ -53,6 +53,7 @@ public class Poker {
                 }
                 printResult(restUtil.getResult(this.gameId, this.hostId));
                 prompt("Press enter to continue:");
+                this.restUtil.resetHand(this.gameId, this.hostId);
             }
         }
     }

@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-USERNAME=tnd
+USERNAME=me
 
 export POKER_API_URL=$1
 export GAME_ID=$2
