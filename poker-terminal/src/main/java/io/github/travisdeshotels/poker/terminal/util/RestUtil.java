@@ -89,7 +89,7 @@ public class RestUtil {
     public String getStatus(String gameId, String playerId){
         try {
             Map response = (Map) this.getData(this.API_URL + "/status/" + gameId + "/" + playerId, Map.class);
-            return (String) response.get("handStatus");
+            return (String) response.get("status");
         } catch (PokerApiException e) {
             throw new RuntimeException(e);
         }
